@@ -14,11 +14,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the test data
 batch_size = 64
-dataset = EgoNatureDataset('test', modality, data_dir, transform=transform_data)
+# self.test_dataset  = EgoNatureDataset("test", folds = [0,1,2], modality=self.modality, data_dir=self.data_dir, transform=self.transform)        
+dataset = EgoNatureDataset('test', folds=[0,1,2], modality=modality, data_dir=data_dir, transform=transform_data)
 test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
 # Load the saved model
-model = ResNet18Classifier.load_from_checkpoint(f"best_models/model_{modality}-v1.ckpt")
+model = ResNet18Classifier.load_from_checkpoint(f"best_models/resnet18_{modality}.ckpt")
 model.to(device)
 
 # Set the model to evaluation mode
