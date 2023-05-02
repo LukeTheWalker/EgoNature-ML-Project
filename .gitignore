@@ -1,0 +1,6 @@
+best_models/*
+!best_models/.gitkeep
+data
+tb_logs
+__pycache__
+AF.py
