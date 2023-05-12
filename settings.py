@@ -13,11 +13,12 @@ std  = {
     }
 
 data_dir = 'data' 
-modality = "Con" #["Con", "Sub", "ConSub"]:
+# modality = "Con" #["Con", "Sub", "ConSub"]:
 DATA_URL = "https://iplab.dmi.unict.it/EgoNature/EgoNature-Dataset.zip"
-transform_data = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=mean[modality], std=std[modality])
-])
+def transform_data(modality: str):
+    return transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean[modality], std=std[modality])
+    ])

@@ -64,13 +64,14 @@ def main ():
     config = parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    transform = transform_data(config["modality"])
 
     model = ResNet18Classifier.load_from_checkpoint(config["model"])
     model.to(device)
     model.eval()
 
     image = Image.open(config["input"])
-    image = transform_data(image)
+    image = transform(image)
     image = image.to(device)
     image = image.unsqueeze(0)
 

@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 from egonature import EgoNatureDataset
 from classifier import ResNet18Classifier
-from settings import data_dir, modality, transform_data
+from settings import data_dir, transform_data
 from torch.utils.data import DataLoader
 from sklearn.metrics import ConfusionMatrixDisplay
 from tqdm import tqdm
@@ -27,11 +27,12 @@ def main():
     config = parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    transform = transform_data(config["modality"])
 
     # Load the test data
     batch_size = 64
     # self.test_dataset  = EgoNatureDataset("test", folds = [0,1,2], modality=self.modality, data_dir=self.data_dir, transform=self.transform)        
-    dataset = EgoNatureDataset('test', folds=[0,1,2], modality=config["modality"], data_dir=data_dir, transform=transform_data)
+    dataset = EgoNatureDataset('test', folds=[0,1,2], modality=config["modality"], data_dir=data_dir, transform=transform)
     test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
     # Load the saved model
