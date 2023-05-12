@@ -12,6 +12,12 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from classifier import ResNet18Classifier
 from egonature import EgoNatureDataModule
 from settings import *
+import sys
+
+# grab first command line argument
+fold = int(sys.argv[1])
+
+print(f"Validation fold {fold}")
 
 # if not os.path.exists(data_dir):
 #     download_and_extract_archive(url=DATA_URL, download_root=data_dir, remove_finished=True)
@@ -29,7 +35,7 @@ data_module = EgoNatureDataModule(data_dir=data_dir, batch_size=batch_size, moda
 num_classes = data_module.num_classes()
 model = ResNet18Classifier(num_classes=num_classes, lr=1e-3)
 
-logger = TensorBoardLogger("tb_logs", name=f"nature_{model.model_name()}{modality}", default_hp_metric=False)
+logger = TensorBoardLogger("tb_logs", name=f"nature_{model.model_name()}{modality}_fold{fold}", default_hp_metric=False)
 
 accelerator = 'cuda' if torch.cuda.is_available() else 'mps'
 
@@ -38,7 +44,7 @@ max_epochs = 15 if modality != 'Sub' else 30
 # Train the model 
 checkpoint_callback = ModelCheckpoint(
     dirpath="best_models",
-    filename=f"{model.model_name()}_{modality}",
+    filename=f"{model.model_name()}_{modality}_fold{fold}",
     save_top_k=1,
     monitor="val_acc",
     mode="max"

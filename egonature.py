@@ -93,7 +93,7 @@ class EgoNatureDataModule(pl.LightningDataModule):
     
     def setup(self, stage: str):
         if stage == "fit":
-            self.train_dataset = EgoNatureDataset("train",  folds = [i for i in range(0, 2) if i != self.val_fold], modality=self.modality, data_dir=self.data_dir, transform=self.transform)
+            self.train_dataset = EgoNatureDataset("train",  folds = [i for i in range(0, 3) if i != self.val_fold], modality=self.modality, data_dir=self.data_dir, transform=self.transform)
             self.val_dataset   = EgoNatureDataset("train" , folds = [self.val_fold], modality=self.modality, data_dir=self.data_dir, transform=self.transform)
         elif stage == "test":
             self.test_dataset  = EgoNatureDataset("test", folds = [0,1,2], modality=self.modality, data_dir=self.data_dir, transform=self.transform)        
