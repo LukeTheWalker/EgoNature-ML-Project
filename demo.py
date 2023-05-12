@@ -9,7 +9,7 @@ import numpy as np
 
 from classifier import ResNet18Classifier
 from settings import transform_data
-from egonature import classes
+from egonature import get_classes
 
 def plot_results (class_labels: list[str], class_probs: list[float], img: str, gt: int):
     # Load image
@@ -31,7 +31,7 @@ def plot_results (class_labels: list[str], class_probs: list[float], img: str, g
     ax2.set_xticks([])
     
     fig.tight_layout()
-    fig.savefig("results.png")
+    fig.savefig("results/results.png", dpi=300)
     
 
 def find_label (img_name: str, modality: str) -> int:
@@ -79,7 +79,7 @@ def main ():
         preds = model(image)
         preds = nn.functional.softmax(preds, dim=1)
 
-    pred_classes = classes(config["modality"])
+    pred_classes = get_classes(config["modality"])
     preds = preds.squeeze(0).cpu().numpy()
 
     label = find_label(os.path.basename(config["input"]), config["modality"])

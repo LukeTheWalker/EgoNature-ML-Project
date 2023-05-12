@@ -11,7 +11,7 @@ from torchvision.datasets.utils import download_and_extract_archive
 
 import pytorch_lightning as pl
 
-def classes(modality: str) -> list:
+def get_classes(modality: str) -> list:
         assert modality in ["Con", "Sub", "ConSub"]
         if modality == "Con":
             return ["Entrance", "Monumental Building", "Greenhouse", "Succulents", "Sicilian Garden", "Leftmost Garden", "Passageway", "Central Garden", "Rightmost Garden"]
@@ -22,7 +22,7 @@ def classes(modality: str) -> list:
 
 
 def num_classes(modality: str) -> int:
-    return len(classes(modality))
+    return len(get_classes(modality))
 
 class EgoNatureDataset(Dataset):
     def __init__(self, stage: str, modality: str, data_dir: str, folds: list, transform=None):
@@ -74,7 +74,7 @@ class EgoNatureDataset(Dataset):
 
     @property
     def classes(self):
-        return classes(self.modality)
+        return get_classes(self.modality)
     
 class EgoNatureDataModule(pl.LightningDataModule):
     def __init__(self, data_dir: str, batch_size: int, modality: str, data_url: str, num_workers: int, val_fold: int, transform=None):
