@@ -15,13 +15,13 @@ from settings import *
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Utility Script to use the model trained for the ML project on the EgoNature Dataset", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-m", "--model", help="best model folder path", required=True)
+    parser.add_argument("-m", "--models_folder", help="best model folder path", required=True)
     parser.add_argument("-mod", "--modality", help="modality", choices=["Con", "Sub", "ConSub"], required=True)
-    parser.add_argument("-f", "--fold", help="fold", choices=[0,1,2], required=True)
+    parser.add_argument("-f", "--fold", help="fold", choices=['0','1','2'], required=True)
     args = parser.parse_args()
     config = vars(args)
     # check if all the paths are valid
-    assert os.path.exists(config["model"]), "model path does not exist"
+    assert os.path.exists(config["models_folder"]), "model path does not exist"
     return config
 
 def main ():
@@ -30,12 +30,13 @@ def main ():
     # grab first command line argument
     fold = int(config["fold"])
     modality = config["modality"]
-    model_dirpath = config["model"]
+    model_dirpath = config["models_folder"]
+    transform = transform_data(modality)
 
     print(f"Validation fold {fold}")
 
     batch_size = 64 
-    data_module = EgoNatureDataModule(data_dir=data_dir, batch_size=batch_size, modality=modality, data_url=DATA_URL, num_workers=8, val_fold=2, transform=transform_data)
+    data_module = EgoNatureDataModule(data_dir=data_dir, batch_size=batch_size, modality=modality, data_url=DATA_URL, num_workers=8, val_fold=2, transform=transform)
 
     # Define the model 
     num_classes = data_module.num_classes()

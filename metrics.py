@@ -90,12 +90,14 @@ def main ():
 
     # and each row is a class
 
-    results = pd.DataFrame(columns=["fold 0 / precision", "fold 0 / recall", "fold 0 / f1", "fold 1 / precision", "fold 1 / recall", "fold 1 / f1", "fold 2 / precision", "fold 2 / recall", "fold 2 / f1", "mean / precision", "mean / recall", "mean / f1"], index=classes)
+    results = pd.DataFrame(columns=["fold 0 / precision", "fold 0 / recall", "fold 0 / f1", "fold 1 / precision", "fold 1 / recall", "fold 1 / f1", "fold 2 / precision", "fold 2 / recall", "fold 2 / f1", "combined / precision", "combined / recall", "combined / f1", "mean / precision", "mean / recall", "mean / f1"], index=classes)
+    accuracies = np.array([])
 
     # for each fold, calculate the accuracy
     for i in range(0, all_distribs.shape[2]):
         preds = np.argmax(all_distribs[:,:,i], axis=1)
         accuracy = np.mean(preds == all_labels)
+        accuracies = np.append(accuracies, accuracy)
         print(f"Fold {i} Accuracy: {accuracy*100:.2f}%")
         # for each class, calculate the precision and recall and F1 score
         for c in range(0, len(classes)):
@@ -114,7 +116,7 @@ def main ():
     mean_predictions = np.mean(all_distribs, axis=2)
     preds = np.argmax(mean_predictions, axis=1)
     accuracy = np.mean(preds == all_labels)
-    print(f"Mean Accuracy: {accuracy*100:.2f}%")
+    print(f"combined Accuracy: {accuracy*100:.2f}%")
     # for each class, calculate the precision and recall and F1 score
     for c in range(0, len(classes)):
         tp = np.sum(preds[all_labels == c] == c)
@@ -124,13 +126,21 @@ def main ():
         recall = tp / (tp + fn)
         f1 = 2 * precision * recall / (precision + recall)
         # print(f"{classes[c]}: precision {precision*100:.2f}%, recall {recall*100:.2f}%, F1 {f1*100:.2f}%")
-        results.loc[classes[c], f"mean / precision"] = precision
-        results.loc[classes[c], f"mean / recall"] = recall
-        results.loc[classes[c], f"mean / f1"] = f1
+        results.loc[classes[c], f"combined / precision"] = precision
+        results.loc[classes[c], f"combined / recall"] = recall
+        results.loc[classes[c], f"combined / f1"] = f1
+
+    results["mean / precision"] = results[["fold 0 / precision", "fold 1 / precision", "fold 2 / precision"]].mean(axis=1)
+    results["mean / recall"] = results[["fold 0 / recall", "fold 1 / recall", "fold 2 / recall"]].mean(axis=1)
+    results["mean / f1"] = results[["fold 0 / f1", "fold 1 / f1", "fold 2 / f1"]].mean(axis=1)
+
+    # calculate the mean and standard deviation of the accuracy
+    print(f"Mean accuracy: {np.mean(accuracies)*100:.5f}%")
 
     print(results)
     # save using two decimal places
     results = results.astype(float)
+    # results[["mean / precision", "mean / recall", "mean / f1"]].to_csv(os.path.join("results", f"results_{config['modality']}.csv"), float_format="%.3f")
     results.to_csv(os.path.join("results", f"results_{config['modality']}.csv"), float_format="%.3f")
         
 
