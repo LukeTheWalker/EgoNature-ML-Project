@@ -140,6 +140,7 @@ def main ():
     print(results)
     # save using two decimal places
     results = results.astype(float)
+    # results = np.floor(results * 1000) / 1000
     # results[["mean / precision", "mean / recall", "mean / f1"]].to_csv(os.path.join("results", f"results_{config['modality']}.csv"), float_format="%.3f")
     results.to_csv(os.path.join("results", f"results_{config['modality']}.csv"), float_format="%.3f")
         

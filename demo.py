@@ -18,6 +18,7 @@ def plot_results (class_labels: list[str], class_probs: list[float], img: str, g
     # Plot image and class probabilities
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
     ax1.imshow(img)
+    ax1.set_title(f"Ground Truth: {class_labels[gt]}")
     ax1.axis("off")
     y_pos = np.arange(len(class_labels))
     colors = np.random.rand(len(class_labels), 3)
