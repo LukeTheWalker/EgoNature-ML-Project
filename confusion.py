@@ -11,15 +11,17 @@ from settings import data_dir, transform_data
 from torch.utils.data import DataLoader
 from sklearn.metrics import ConfusionMatrixDisplay
 from tqdm import tqdm
+import re
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Utility Script to use the model trained for the ML project on the EgoNature Dataset", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-m", "--model", help="model path", required=True)
+    parser.add_argument("-m", "--model_path", help="models path", required=True)
     parser.add_argument("-mod", "--modality", help="modality", choices=["Con", "Sub", "ConSub"], required=True)
+    parser.add_argument("-f", "--fold", help="fold", choices=['0','1','2'], default=['0','1','2'], nargs="+")
     args = parser.parse_args()
     config = vars(args)
     # check if all the paths are valid
-    assert os.path.exists(config["model"]), "model path does not exist"
+    assert os.path.exists(config["model_path"]), "model path does not exist"
     return config
 
 
@@ -35,24 +37,26 @@ def main():
     dataset = EgoNatureDataset('test', folds=[0,1,2], modality=config["modality"], data_dir=data_dir, transform=transform)
     test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
-    # Load the saved model
-    model = ResNet18Classifier.load_from_checkpoint(config["model"])
-    model.to(device)
-
-    # Set the model to evaluation mode
-    model.eval()
-
-    # Calculate predictions for the test data
     all_preds = []
     all_labels = []
-    with torch.no_grad():
-        for images, labels in tqdm(test_loader, desc='Predicting labels'):
-            images = images.to(device)
-            preds = model(images)
-            preds = nn.functional.softmax(preds, dim=1)
-            preds = torch.argmax(preds, dim=1)
-            all_preds.extend(preds.cpu().numpy())
-            all_labels.extend(labels.cpu().numpy())
+    # Load the saved model
+    for fold in config["fold"]:
+        # model = ResNet18Classifier.load_from_checkpoint(re.sub(r'fold\d', f'fold{fold}', config["model"]))
+        model = ResNet18Classifier.load_from_checkpoint(os.path.join(config["model_path"], "resnet18_" + config["modality"] + "_fold" + fold + ".ckpt"))
+        model.to(device)
+
+        # Set the model to evaluation mode
+        model.eval()
+
+        # Calculate predictions for the test data
+        with torch.no_grad():
+            for images, labels in tqdm(test_loader, desc='Predicting labels'):
+                images = images.to(device)
+                preds = model(images)
+                preds = nn.functional.softmax(preds, dim=1)
+                preds = torch.argmax(preds, dim=1)
+                all_preds.extend(preds.cpu().numpy())
+                all_labels.extend(labels.cpu().numpy())
 
     # Calculate the confusion matrix
     conf_mat = confusion_matrix(all_labels, all_preds)
@@ -75,7 +79,7 @@ def main():
     ax.set_title('Confusion matrix')
 
     f.tight_layout()
-    f.savefig(f'confusion_matrix{config["modality"]}.png', dpi=300)
+    f.savefig(f'confusion_matrix{config["modality"]}_fold{"".join(config["fold"])}.png', dpi=300)
 
 if __name__ == "__main__":
     main()
