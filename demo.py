@@ -18,7 +18,7 @@ def plot_results (class_labels: list[str], class_probs: list[float], img: str, g
     # Plot image and class probabilities
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
     ax1.imshow(img)
-    ax1.set_title(f"Ground Truth: {class_labels[gt]}")
+    ax1.set_title(f"Ground Truth: {class_labels[gt] if gt != -1 else 'Unknown'}")
     ax1.axis("off")
     y_pos = np.arange(len(class_labels))
     colors = np.random.rand(len(class_labels), 3)
@@ -44,6 +44,10 @@ def find_label (img_name: str, modality: str) -> int:
         df = pd.read_csv(file_path, delimiter=",", header=None)
         df.columns = ["image_names", "labels"]
         dfs = pd.concat([dfs, df], ignore_index=True)
+
+    # check if image is in the dataframe
+    if img_name not in dfs["image_names"].values:
+        return None
 
     return dfs[dfs["image_names"] == img_name]["labels"].values[0]
 
@@ -83,11 +87,12 @@ def main ():
     pred_classes = get_classes(config["modality"])
     preds = preds.squeeze(0).cpu().numpy()
 
-    label = find_label(os.path.basename(config["input"]), config["modality"])
+    search_label = find_label(os.path.basename(config["input"]), config["modality"])
+    label = search_label if search_label is not None else -1
 
     for i, pred in enumerate(preds):
         print(f"{pred_classes[i]}: {pred*100:.2f}%", end="")
-        if i == label:
+        if i == label and label != -1:
             print(" <--- True label", end="")
         print()
 
