@@ -83,9 +83,23 @@ def main ():
     image = image.to(device)
     image = image.unsqueeze(0)
 
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats()
+
+    start_time = torch.cuda.Event(enable_timing=True)
+    end_time = torch.cuda.Event(enable_timing=True)
+
+    start_time.record()
+
     with torch.no_grad():
         preds = model(image)
         preds = nn.functional.softmax(preds, dim=1)
+
+    end_time.record()
+    torch.cuda.synchronize()
+    print(f"Elapsed time: {start_time.elapsed_time(end_time):.2f} ms")
+    print(f"Peak memory usage: {torch.cuda.max_memory_allocated()/1024**2:.2f} MB")
+
 
     pred_classes = get_classes(config["modality"])
     preds = preds.squeeze(0).cpu().numpy()
