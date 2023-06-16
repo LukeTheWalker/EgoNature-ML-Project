@@ -18,7 +18,7 @@ def get_classes(modality: str) -> list:
         elif modality == "Sub":
             return ["Dune", "Dune-Scrubland", "Marshy-Forestry", "Marshy-Coastal", "Marshy", "Coastal", "Cliffs", "Cliffs-Forestry", "Entrance"]
         elif modality == "ConSub":
-            return ["Entrance", "Monumental Building", "Greenhouse", "Succulents", "Leftmost Garden", "Passageway", "Central Garden", "Rightmost Garden", "Dune", "Dune-Scrubland", "Marshy-Forestry", "Marshy-Coastal", "Marshy", "Coastal", "Cliffs", "Cliffs-Forestry", "Entrance"]
+            return ["Entrance", "Monumental Building", "Greenhouse", "Succulents", "Leftmost Garden", "Passageway", "Central Garden", "Rightmost Garden", "Dune", "Dune-Scrubland", "Marshy-Forestry", "Marshy-Coastal", "Marshy", "Coastal", "Cliffs", "Cliffs-Forestry", "Entrance_Sicilian"]
 
 
 def num_classes(modality: str) -> int:
