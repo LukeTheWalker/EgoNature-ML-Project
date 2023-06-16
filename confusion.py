@@ -26,6 +26,9 @@ def parse_args():
 
 
 def main():
+    if not os.path.exists("confusion_matrices"):
+        os.mkdir("confusion_matrices")
+
     config = parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -80,7 +83,7 @@ def main():
     ax.set_title('Confusion matrix')
 
     f.tight_layout()
-    f.savefig(f'confusion_matrix{config["modality"]}_fold{"".join(config["fold"])}.png', dpi=300)
+    f.savefig(f'confusion_matrices/confusion_matrix{config["modality"]}_fold{"".join(config["fold"])}.png', dpi=300)
 
 if __name__ == "__main__":
     main()

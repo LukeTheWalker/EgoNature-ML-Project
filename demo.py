@@ -12,6 +12,9 @@ from settings import transform_data
 from egonature import get_classes
 
 def plot_results (class_labels: list[str], class_probs: list[float], img: str, gt: int):
+    if not os.path.exists("results"):
+        os.mkdir("results")
+
     # Load image
     img = plt.imread(img)
 

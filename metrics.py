@@ -25,6 +25,9 @@ def parse_args():
 
 
 def main ():
+    if not os.path.exists("bkp"):
+        os.mkdir("bkp")
+
     config = parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
