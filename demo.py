@@ -99,6 +99,7 @@ def main ():
     torch.cuda.synchronize()
     print(f"Elapsed time: {start_time.elapsed_time(end_time):.2f} ms")
     print(f"Peak memory usage: {torch.cuda.max_memory_allocated()/1024**2:.2f} MB")
+    print("----------------------------------------")
 
 
     pred_classes = get_classes(config["modality"])
