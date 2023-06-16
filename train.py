@@ -36,7 +36,7 @@ def main ():
     print(f"Validation fold {fold}")
 
     batch_size = 64 
-    data_module = EgoNatureDataModule(data_dir=data_dir, batch_size=batch_size, modality=modality, data_url=DATA_URL, num_workers=8, val_fold=2, transform=transform)
+    data_module = EgoNatureDataModule(data_dir=data_dir, batch_size=batch_size, modality=modality, data_url=DATA_URL, num_workers=8, fold=fold, transform=transform)
 
     # Define the model 
     num_classes = data_module.num_classes()
@@ -46,7 +46,7 @@ def main ():
 
     accelerator = 'cuda' if torch.cuda.is_available() else 'mps'
 
-    max_epochs = 15 if modality != 'Sub' else 30
+    max_epochs = 50 if modality != 'Sub' else 50
 
     # Train the model 
     checkpoint_callback = ModelCheckpoint(

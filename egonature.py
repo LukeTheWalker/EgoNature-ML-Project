@@ -25,12 +25,12 @@ def num_classes(modality: str) -> int:
     return len(get_classes(modality))
 
 class EgoNatureDataset(Dataset):
-    def __init__(self, stage: str, modality: str, data_dir: str, folds: list, transform=None):
+    def __init__(self, stage: str, modality: str, data_dir: str, fold: int, transform=None):
         assert stage in ["train", "test"]
         self.stage = stage
         self.modality = modality
         self.data_dir = data_dir
-        self.folds = folds
+        self.fold = fold
         self.transform = transform
         self.main_folder = "EgoNature-Dataset/EgoNature-Dataset/EgoNature - CNN"
         self.image_names, self.labels = self.load_image_names_and_labels()
@@ -42,15 +42,14 @@ class EgoNatureDataset(Dataset):
             raise ValueError("modality must be one of [Con, Sub, ConSub]")
 
         dfs = pd.DataFrame()       
-        for fold in self.folds:
-            fname = f"{self.stage}_{self.modality}_{fold}.txt"
-            file_path = os.path.join(self.data_dir, self.main_folder, fname)
-            assert os.path.exists(file_path)
-            df = pd.read_csv(file_path, delimiter=",", header=None)
-            df.columns = ["image_names", "labels"]
-            df["modality"] = self.modality
-            df["fold"] = fold
-            dfs = pd.concat([dfs, df], ignore_index=True)
+        fname = f"{self.stage}_{self.modality}_{self.fold}.txt"
+        file_path = os.path.join(self.data_dir, self.main_folder, fname)
+        # assert and print path in case of error
+        assert os.path.exists(file_path), f"file_path: {file_path}"
+        df = pd.read_csv(file_path, delimiter=",", header=None)
+        df.columns = ["image_names", "labels"]
+        df["modality"] = self.modality
+        dfs = pd.concat([dfs, df], ignore_index=True)
 
         image_names = dfs["image_names"].tolist()
         labels = dfs["labels"].astype(int).tolist()
@@ -77,13 +76,13 @@ class EgoNatureDataset(Dataset):
         return get_classes(self.modality)
     
 class EgoNatureDataModule(pl.LightningDataModule):
-    def __init__(self, data_dir: str, batch_size: int, modality: str, data_url: str, num_workers: int, val_fold: int, transform=None):
+    def __init__(self, data_dir: str, batch_size: int, modality: str, data_url: str, num_workers: int, fold: int, transform=None):
         super().__init__()
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.modality = modality
         self.data_url = data_url
-        self.val_fold = val_fold
+        self.fold = fold
         self.transform = transform
         self.num_workers = num_workers
 
@@ -93,12 +92,10 @@ class EgoNatureDataModule(pl.LightningDataModule):
     
     def setup(self, stage: str):
         if stage == "fit":
-            self.train_dataset = EgoNatureDataset("train",  folds = [i for i in range(0, 3) if i != self.val_fold], modality=self.modality, data_dir=self.data_dir, transform=self.transform)
-            self.val_dataset   = EgoNatureDataset("train" , folds = [self.val_fold], modality=self.modality, data_dir=self.data_dir, transform=self.transform)
-        elif stage == "test":
-            self.test_dataset  = EgoNatureDataset("test", folds = [0,1,2], modality=self.modality, data_dir=self.data_dir, transform=self.transform)        
+            self.train_dataset = EgoNatureDataset("train",  fold = self.fold, modality=self.modality, data_dir=self.data_dir, transform=self.transform)
+            self.val_dataset   = EgoNatureDataset("test" ,  fold = self.fold, modality=self.modality, data_dir=self.data_dir, transform=self.transform)
         else:
-            raise ValueError("stage must be one of [fit, test]")
+            raise ValueError("stage must be [fit]")
 
     def train_dataloader(self):
         return DataLoader(
@@ -112,7 +109,7 @@ class EgoNatureDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(
-            self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers
+            self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers
         )
 
     def num_classes(self):

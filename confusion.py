@@ -34,13 +34,14 @@ def main():
     # Load the test data
     batch_size = 64
     # self.test_dataset  = EgoNatureDataset("test", folds = [0,1,2], modality=self.modality, data_dir=self.data_dir, transform=self.transform)        
-    dataset = EgoNatureDataset('test', folds=[0,1,2], modality=config["modality"], data_dir=data_dir, transform=transform)
-    test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
     all_preds = []
     all_labels = []
     # Load the saved model
     for fold in config["fold"]:
+        dataset = EgoNatureDataset('test', fold=fold, modality=config["modality"], data_dir=data_dir, transform=transform)
+        test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
+
         # model = ResNet18Classifier.load_from_checkpoint(re.sub(r'fold\d', f'fold{fold}', config["model"]))
         model = ResNet18Classifier.load_from_checkpoint(os.path.join(config["model_path"], "resnet18_" + config["modality"] + "_fold" + fold + ".ckpt"))
         model.to(device)
