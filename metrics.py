@@ -36,6 +36,7 @@ def main ():
     classes = get_classes(config["modality"])
 
     results = pd.DataFrame(columns=["fold 0 / precision", "fold 0 / recall", "fold 0 / f1", "fold 1 / precision", "fold 1 / recall", "fold 1 / f1", "fold 2 / precision", "fold 2 / recall", "fold 2 / f1", "combined / precision", "combined / recall", "combined / f1", "mean / precision", "mean / recall", "mean / f1"], index=classes)
+    accuracies = np.array([])
 
     # if the distributions have already been calculated, load them from file
     for fold in range(0, 3):
@@ -82,10 +83,6 @@ def main ():
 
         # and each row is a class
 
-        accuracies = np.array([])
-
-        # for each fold, calculate the accuracy
-
         print(fold_distribs.shape)
         preds = np.argmax(fold_distribs[:,:], axis=1)
         accuracy = np.mean(preds == fold_labels)
@@ -111,7 +108,7 @@ def main ():
     # calculate the mean and standard deviation of the accuracy
     print(f"Mean accuracy: {np.mean(accuracies)*100:.5f}%")
 
-    print(results)
+    # print(results)
     # save using two decimal places
     results = results.astype(float)
     # results = np.floor(results * 1000) / 1000
