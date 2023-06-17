@@ -1,5 +1,6 @@
 import argparse
 import os
+from lightning_lite import seed_everything
 
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -26,6 +27,9 @@ def parse_args():
 
 def main ():
     config = parse_args()
+
+    # seed all random number generators
+    seed_everything(42)
 
     # grab first command line argument
     fold = int(config["fold"])
