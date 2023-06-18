@@ -63,8 +63,8 @@ def parse_args():
     args = parser.parse_args()
     config = vars(args)
     # check if all the paths are valid
-    assert os.path.exists(config["model"]), "model path does not exist"
-    assert os.path.exists(config["input"]), "input image path does not exist"
+    assert os.path.exists(config["model"]), "model path does not exist " + config["model"]
+    assert os.path.exists(config["input"]), "input image path does not exist " + config["input"]
     return config
 
 

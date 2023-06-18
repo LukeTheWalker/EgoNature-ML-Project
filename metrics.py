@@ -28,6 +28,9 @@ def main ():
     if not os.path.exists("bkp"):
         os.mkdir("bkp")
 
+    if not os.path.exists("results"):
+        os.mkdir("results")
+
     config = parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
