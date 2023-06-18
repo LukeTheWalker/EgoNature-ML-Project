@@ -38,7 +38,7 @@ def main ():
     transform = transform_data(config["modality"])
     classes = get_classes(config["modality"])
 
-    results = pd.DataFrame(columns=["fold 0 / precision", "fold 0 / recall", "fold 0 / f1", "fold 1 / precision", "fold 1 / recall", "fold 1 / f1", "fold 2 / precision", "fold 2 / recall", "fold 2 / f1", "combined / precision", "combined / recall", "combined / f1", "mean / precision", "mean / recall", "mean / f1"], index=classes)
+    results = pd.DataFrame(columns=["fold 0 / precision", "fold 0 / recall", "fold 0 / f1", "fold 1 / precision", "fold 1 / recall", "fold 1 / f1", "fold 2 / precision", "fold 2 / recall", "fold 2 / f1", "mean / precision", "mean / recall", "mean / f1"], index=classes)
     accuracies = np.array([])
 
     # if the distributions have already been calculated, load them from file
