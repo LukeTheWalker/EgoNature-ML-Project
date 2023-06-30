@@ -41,7 +41,7 @@ Il Dataset utilizzato in questo progetto è [Egonaure](https://iplab.dmi.unict.i
 
 Il dataset presenta sia immagini egocentriche che dati GPS dei visitatori, ma per lo sviluppo di questo progetto ci limiteremo a considerare le immagini. Il dataset è diviso in 3 livelli di granularità della localizzazione: 9 Context, 9 Subcontext e 17 Context-Subcontext, I 9 contesti rapresentano 9 macroaree dell'orto, i 9 sub-context sono le sottoaree della macroarea "Giardino Siciliano" e i 17 Context-Subcontext sono le combinazioni dei due livelli precedenti, una mappa esplicativa delle aree:
 
-![Map](egonature_images/TopologiaOrto.png)
+![Map](relazione/egonature_images/TopologiaOrto.png)
 
 Le immagini si trovano tutte nella stessa cartella insieme ad alcuni file .txt che contengono le classi di appartenza di ciascuna immagine. Oltre ad essere suddiviso per modality è presente anche una divisione in tre fold e uno split fra training e test set. Per ciascuna combinazione di modality, fold e set è presente un apposito file di txt, il cui filename segue la seguente regola:
 
@@ -67,11 +67,11 @@ Metodo di acquisizione: I volontari sono stati istruiti a visitare tutti i 9 con
 
 Un estratto del dataset:
 
-![Dataset](egonature_images/datasetexample.png)
+![Dataset](relazione/egonature_images/datasetexample.png)
 
 Inoltre i video sono stati divisi in modo che i frame di ogni classe fossero distribuiti in modo equo nei diversi fold. La distribuzione dei frame per ogni fold è mostrata nella figura seguente. Gli istogrammi sono stati normalizzati: rappresentano la percentuale di frame per ogni contesto/sottoclasse sul totale per ogni distribuzione riportata. Sono riportati insieme sia il Training Set [TR] che il Test Set [TE].
 
-![Istogrammi](egonature_images/framePerc.PNG)
+![Istogrammi](relazione/egonature_images/framePerc.PNG)
 
 ## Metodi
 
@@ -87,13 +87,13 @@ L'ottimizzazione dei parametri del classificatore è stata eseguita tramite la d
 
 L'architettura ResNet (He, K., Zhang, X., Ren, S., & Sun, J. [2015](https://arxiv.org/abs/1512.03385))  (Residual Network) è stata introdotta nel 2015 e rappresenta un'evoluzione delle classiche architetture di reti neurali convoluzionali. Il principale vantaggio di ResNet rispetto ad altre architetture è l'utilizzo di blocchi residui, ovvero di un'architettura a "skip connections" che permette di superare i problemi di degradazione della performance che si verificano in presenza di reti molto profonde.
 
-![](resnet_images/residual.png)
+![](relazione/resnet_images/residual.png)
 
 In particolare, i blocchi residui permettono al flusso di informazione di "saltare" alcuni layer della rete e andare direttamente a layer successivi, senza dover passare attraverso tutti i layer intermedi. Questo aiuta a evitare problemi di vanishing gradient, che si verificano quando la derivata della funzione di attivazione si avvicina a zero e rallenta il processo di apprendimento.
 
 In ResNet, i blocchi residui sono composti da due strati convoluzionali e da un'operazione di somma tra l'input e l'output del blocco. In questo modo, il flusso di informazione viene diviso in due parti: la parte che rappresenta l'input originale e la parte che rappresenta l'aggiornamento delle feature map tramite i due strati convoluzionali.
 
-![](resnet_images/ResNetArchitecture.png)
+![](relazione/resnet_images/ResNetArchitecture.png)
 
 Di ResNet esistono varie versioni, che si distinguono l'una dall'altra per la la complessità del modello, ciascuna identificata dal numero di layer che solitamente accompagnano il nome del modello (ad esempio ResNet18, ResNet34, ResNet50, ResNet101, ResNet152). In particolare, ResNet18 è un modello relativamente semplice che è stato utilizzato come base per il classificatore implementato in questo progetto poichè il task non richiedeva una grande complessità del modello.
 
@@ -128,11 +128,11 @@ Dipendentemente dalla modality, l'ultimo layer della rete è stato modificato pe
 In fase di test è stata computata la confusion matrix, ovvero una matrice che mostra il numero di predizioni corrette e incorrette fatte dal modello rispetto al numero totale di predizioni per ogni classe.
 
 <div style="display: flex; flex-direction: row; justify-content: space-between">
-    <img src="confusion_matrixes/confusion_matrixCon_fold012.png" width="50%">
-    <img src="confusion_matrixes/confusion_matrixSub_fold012.png" width="50%">
+    <img src="relazione/confusion_matrixes/confusion_matrixCon_fold012.png" width="50%">
+    <img src="relazione/confusion_matrixes/confusion_matrixSub_fold012.png" width="50%">
 </div>
 <div style="display: flex; flex-direction: row; justify-content: space-between">
-    <img src="confusion_matrixes/confusion_matrixConSub_fold012.png" width="100%">
+    <img src="relazione/confusion_matrixes/confusion_matrixConSub_fold012.png" width="100%">
 </div>
 <br/>
 
@@ -288,13 +288,13 @@ Entrance_Sicilian: 0.00%
 Inoltre viene generata, all'interno della cartella results, un'immagine con matplot con una piccola rappresentazione della probabilità di appartenenza dell'immagine a ciascuna classe; di seguito quattro esempi di output, due corretti e due errati:
 
 <div style="display: flex; flex-direction: row; justify-content: space-between">
-    <img src="results/results_good1.png" width="50%">
-    <img src="results/results_good2.png" width="50%">
+    <img src="relazione/results/results_good1.png" width="50%">
+    <img src="relazione/results/results_good2.png" width="50%">
 </div>
 
 <div style="display: flex; flex-direction: row; justify-content: space-between">
-    <img src="results/results_bad1.png" width="50%">
-    <img src="results/results_bad2.png" width="50%">
+    <img src="relazione/results/results_bad1.png" width="50%">
+    <img src="relazione/results/results_bad2.png" width="50%">
 </div>
 <br/>
 
