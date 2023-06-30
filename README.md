@@ -1,3 +1,7 @@
+# EgoNature-ML-Project
+
+Harness the power of machine learning to localize person using egocentric images!
+
 # Relazione Progetto di Machine Learning
 
 **Nome**: *Luca Venerando*
